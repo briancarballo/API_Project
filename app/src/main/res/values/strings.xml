@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Hashtag Checker</string>
+    <string name="ResultScreenText">This is supposed to show the definition once I figure out how to parse the JSON. For now, you typed:</string>
+</resources>
