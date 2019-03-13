@@ -12,8 +12,8 @@ public class ResultScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result_screen);
         Intent intent = getIntent();
-        String display = intent.getStringExtra("key");
+        String display = intent.getStringExtra("hashtagDefinition");
         TextView text = (TextView) findViewById(R.id.resultTextbox);
-        text.setText(text.getText() + " " + display);
+        text.setText(display);
     }
 }
