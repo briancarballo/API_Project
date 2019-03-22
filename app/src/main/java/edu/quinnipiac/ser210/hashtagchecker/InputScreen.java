@@ -1,13 +1,23 @@
 package edu.quinnipiac.ser210.hashtagchecker;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
+import android.support.constraint.ConstraintLayout;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.ShareActionProvider;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SearchView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,24 +29,32 @@ import java.net.URL;
 
 public class InputScreen extends AppCompatActivity implements View.OnClickListener{
 
-    EditText text;
-    String url1 = "https://tagdef.p.rapidapi.com/one.";
-    String url2 = ".json";
-    String hashtag;
-    DefinitionHandler handler = new DefinitionHandler();
+    private EditText text;
+    private String url1 = "https://tagdef.p.rapidapi.com/one.";
+    private String url2 = ".json";
+    private String hashtag;
+    private TextView hashtagicon,helpText;
+    private DefinitionHandler handler = new DefinitionHandler();
+    private ShareActionProvider provider;
+    private ConstraintLayout layout;
+    private boolean darkMode;
     private final String LOG_TAG = InputScreen.class.getSimpleName();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input_screen);
         Button check = (Button) findViewById(R.id.checkButton);
-
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar_input));
+        layout = (ConstraintLayout) findViewById(R.id.input_layout);
+        hashtagicon = (TextView) findViewById(R.id.hashtag_icon);
+        helpText = (TextView) findViewById(R.id.input_screen_helptext);
+        text = (EditText) findViewById(R.id.input);
 
     }
 
     @Override
     public void onClick(View v) {
-        text = (EditText) findViewById(R.id.input);
+
         new HashtagCheck().execute(String.valueOf(text.getText()));
         //Intent intent = new Intent(this, ResultScreen.class);
         //intent.putExtra("key", text.getText().toString());
@@ -109,6 +127,55 @@ public class InputScreen extends AppCompatActivity implements View.OnClickListen
                 return null;
 
             return buffer;
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu,menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        // Get the ActionProvider for later usage
+        MenuItem shareItem =  menu.findItem(R.id.action_share);
+        provider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case R.id.action_color:
+                if (!darkMode) {
+                    layout.setBackgroundColor(Color.GRAY);
+                    text.setTextColor(Color.WHITE);
+                    text.setHintTextColor(Color.WHITE);
+                    hashtagicon.setTextColor(Color.WHITE);
+                    helpText.setTextColor(Color.WHITE);
+                    darkMode = !darkMode;
+                }
+                else {
+                    layout.setBackgroundColor(Color.WHITE);
+                    text.setTextColor(Color.BLACK);
+                    text.setHintTextColor(Color.BLACK);
+                    hashtagicon.setTextColor(Color.BLACK);
+                    helpText.setTextColor(Color.BLACK);
+                    darkMode = !darkMode;
+                }
+                return  true;
+            case R.id.help:
+                Toast.makeText(this,"Type in a hashtag and the most popular definition will appear",Toast.LENGTH_LONG).show();
+                return  true;
+            case R.id.action_share:
+                // populate the share intent with data
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_TEXT, ".");
+                provider.setShareIntent(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

@@ -2,12 +2,13 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/input_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".InputScreen">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/input_screen_helptext"
         android:layout_width="318dp"
         android:layout_height="39dp"
         android:layout_marginStart="8dp"
@@ -22,7 +23,7 @@
         app:layout_constraintVertical_bias="0.41000003" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/hashtag_icon"
         android:layout_width="14dp"
         android:layout_height="35dp"
         android:layout_marginStart="24dp"
@@ -43,8 +44,8 @@
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/textView2"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintStart_toEndOf="@+id/hashtag_icon"
+        app:layout_constraintTop_toBottomOf="@+id/input_screen_helptext" />
 
     <Button
         android:id="@+id/checkButton"
@@ -58,4 +59,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/input" />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="8dp" />
+
 </android.support.constraint.ConstraintLayout>
