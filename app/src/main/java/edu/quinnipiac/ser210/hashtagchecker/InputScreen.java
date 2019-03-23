@@ -3,10 +3,10 @@ package edu.quinnipiac.ser210.hashtagchecker;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -24,9 +24,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
+/**
+ * Input Screen Activity
+ * Author: Brian Carballo
+ * SER210
+ *
+ * Class contains input methods for user to put in a hashtag to be searched. Activity communicates
+ * with API and passes on a JSON string to a handler. The handler output is then passed on to the
+ * next activity
+ */
 public class InputScreen extends AppCompatActivity implements View.OnClickListener{
 
     private EditText text;
@@ -39,12 +47,15 @@ public class InputScreen extends AppCompatActivity implements View.OnClickListen
     private ConstraintLayout layout;
     private boolean darkMode;
     private final String LOG_TAG = InputScreen.class.getSimpleName();
+    private Button check;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input_screen);
-        Button check = (Button) findViewById(R.id.checkButton);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar_input));
+
+        //Initiates elements from xml and creates java equivalents
+        check = (Button) findViewById(R.id.checkButton);
         layout = (ConstraintLayout) findViewById(R.id.input_layout);
         hashtagicon = (TextView) findViewById(R.id.hashtag_icon);
         helpText = (TextView) findViewById(R.id.input_screen_helptext);
@@ -54,13 +65,11 @@ public class InputScreen extends AppCompatActivity implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-
+        //When the button is clicked, the definition for the hashtag from editText is
         new HashtagCheck().execute(String.valueOf(text.getText()));
-        //Intent intent = new Intent(this, ResultScreen.class);
-        //intent.putExtra("key", text.getText().toString());
-        //startActivity(intent);
     }
 
+    //Process where the hashtag definition is checked
     private class HashtagCheck extends AsyncTask<String, Void, String> {
 
         @Override
@@ -69,6 +78,7 @@ public class InputScreen extends AppCompatActivity implements View.OnClickListen
             BufferedReader reader = null;
             String hashtagDefinition = null;
 
+            //Attempts to open a connection
             try{
                 URL url = new URL(url1 + strings[0] + url2);
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -76,17 +86,24 @@ public class InputScreen extends AppCompatActivity implements View.OnClickListen
                 urlConnection.setRequestProperty("X-RapidAPI-Key","cbcc14d80fmsh27971fc9d28845ep1daac9jsnda7cb1cd6ab2");
                 urlConnection.connect();
                 InputStream in = urlConnection.getInputStream();
+
+                //checks if there exists a result
                 if(in == null) {
                     return null;
                 }
+
+                //Reads input
                 reader = new BufferedReader(new InputStreamReader(in));
                 String hashtagDefinitionJsonString = getBufferStringFromBuffer(reader).toString();
-                Log.d("JSON", hashtagDefinitionJsonString);
+
+                //Passes JSON to handler for parsing
                 hashtagDefinition = handler.getDefinition(hashtagDefinitionJsonString);
 
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
+
+                //Closes URL connection and reader once done
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
@@ -100,21 +117,24 @@ public class InputScreen extends AppCompatActivity implements View.OnClickListen
                     }
                 }
             }
+
+            //Returns final definition to be displayed
             return hashtagDefinition;
         }
 
         protected void onPostExecute(String result){
+            //Checks if there is something to pass before starting result activity
             if (result != null){
-                Log.d(LOG_TAG, result);
 
+                //Starts next activity and passes the definition
                 Intent intent = new Intent(InputScreen.this,ResultScreen.class);
                 intent.putExtra("hashtagDefinition",result);
-
                 startActivity(intent);
 
             }
         }
 
+        //Method for creating JSON String
         private StringBuffer getBufferStringFromBuffer(BufferedReader br) throws Exception{
             StringBuffer buffer = new StringBuffer();
 
@@ -130,12 +150,13 @@ public class InputScreen extends AppCompatActivity implements View.OnClickListen
         }
     }
 
+
+    //Methods for instantiating the toolbar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu,menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) searchItem.getActionView();
-        // Get the ActionProvider for later usage
         MenuItem shareItem =  menu.findItem(R.id.action_share);
         provider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
 
@@ -168,7 +189,6 @@ public class InputScreen extends AppCompatActivity implements View.OnClickListen
                 Toast.makeText(this,"Type in a hashtag and the most popular definition will appear",Toast.LENGTH_LONG).show();
                 return  true;
             case R.id.action_share:
-                // populate the share intent with data
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("text/plain");
                 intent.putExtra(Intent.EXTRA_TEXT, ".");

@@ -14,6 +14,15 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * Result Screen Activity
+ * Author: Brian Carballo
+ * SER210
+ *
+ * Class displays results gathered from the API. Class contains a toolbar with options to share,
+ * change screen color, and see a help toast.
+ *
+ */
 public class ResultScreen extends AppCompatActivity {
 
     private ShareActionProvider provider;
@@ -25,12 +34,20 @@ public class ResultScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result_screen);
+
+        //Sets toolbar
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+
+        //Gets hashtag definition from previous activity
         Intent intent = getIntent();
         result = intent.getStringExtra("hashtagDefinition");
+
+        //Gets java equivalent of XML elements
         text = (TextView) findViewById(R.id.resultTextbox);
         text.setText(result);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         layout = (ConstraintLayout) findViewById(R.id.resultLayout);
+
+        //Determines screen color
         darkMode = false;
     }
 
@@ -49,8 +66,12 @@ public class ResultScreen extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+
+        //Determines action of each button on the toolbar
         switch (id){
             case R.id.action_color:
+
+                //Changes color to dark or light
                 if (!darkMode) {
                     layout.setBackgroundColor(Color.GRAY);
                     text.setTextColor(Color.WHITE);
@@ -66,7 +87,7 @@ public class ResultScreen extends AppCompatActivity {
                 Toast.makeText(this,"Type in a hashtag and the most popular definition will appear",Toast.LENGTH_LONG).show();
                 return  true;
             case R.id.action_share:
-                // populate the share intent with data
+                // Sends definition to sending application
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("text/plain");
                 intent.putExtra(Intent.EXTRA_TEXT, result);
