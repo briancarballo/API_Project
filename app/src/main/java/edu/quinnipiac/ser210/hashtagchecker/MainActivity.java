@@ -1,6 +1,7 @@
 package edu.quinnipiac.ser210.hashtagchecker;
 
 import android.content.Intent;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -14,13 +15,20 @@ import android.widget.Button;
  * Activity is the first activity to be opened. Serves as the splash screen and includes only a
  * start button and a picture
  */
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements MainFragment.Listener {
 
+    MainFragment fragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Button start = (Button) findViewById(R.id.startButton);
+        if (savedInstanceState == null){
+            fragment = new MainFragment();
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.add(R.id.mainFragmentContainer, fragment);
+            ft.addToBackStack(null);
+            ft.commit();
+        }
     }
 
     @Override
