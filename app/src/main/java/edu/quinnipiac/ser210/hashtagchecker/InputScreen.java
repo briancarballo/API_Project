@@ -180,22 +180,24 @@ public class InputScreen extends AppCompatActivity implements InputFragment.List
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.inputContainer);
         switch (id){
             case R.id.action_color:
                 if (!darkMode) {
-                    layout.setBackgroundColor(Color.GRAY);
-                    text.setTextColor(Color.WHITE);
-                    text.setHintTextColor(Color.WHITE);
-                    hashtagicon.setTextColor(Color.WHITE);
-                    helpText.setTextColor(Color.WHITE);
+
+                    fragment.getView().setBackgroundColor(Color.GRAY);
+                    ((EditText) fragment.getView().findViewById(R.id.input)).setTextColor(Color.WHITE);
+                    ((EditText) fragment.getView().findViewById(R.id.input)).setHintTextColor(Color.WHITE);
+                    ((TextView) fragment.getView().findViewById(R.id.hashtag_icon)).setTextColor(Color.WHITE);
+                    ((TextView) fragment.getView().findViewById(R.id.input_screen_helptext)).setTextColor(Color.WHITE);
                     darkMode = !darkMode;
                 }
                 else {
-                    layout.setBackgroundColor(Color.WHITE);
-                    text.setTextColor(Color.BLACK);
-                    text.setHintTextColor(Color.BLACK);
-                    hashtagicon.setTextColor(Color.BLACK);
-                    helpText.setTextColor(Color.BLACK);
+                    fragment.getView().setBackgroundColor(Color.WHITE);
+                    ((EditText) fragment.getView().findViewById(R.id.input)).setTextColor(Color.BLACK);
+                    ((EditText) fragment.getView().findViewById(R.id.input)).setHintTextColor(Color.BLACK);
+                    ((TextView) fragment.getView().findViewById(R.id.hashtag_icon)).setTextColor(Color.BLACK);
+                    ((TextView) fragment.getView().findViewById(R.id.input_screen_helptext)).setTextColor(Color.BLACK);
                     darkMode = !darkMode;
                 }
                 return  true;
