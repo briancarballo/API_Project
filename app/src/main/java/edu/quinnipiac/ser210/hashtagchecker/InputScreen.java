@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
@@ -35,7 +37,7 @@ import java.net.URL;
  * with API and passes on a JSON string to a handler. The handler output is then passed on to the
  * next activity
  */
-public class InputScreen extends AppCompatActivity implements View.OnClickListener{
+public class InputScreen extends AppCompatActivity implements InputFragment.Listener{
 
     private EditText text;
     private String url1 = "https://tagdef.p.rapidapi.com/one.";
@@ -48,25 +50,28 @@ public class InputScreen extends AppCompatActivity implements View.OnClickListen
     private boolean darkMode;
     private final String LOG_TAG = InputScreen.class.getSimpleName();
     private Button check;
+    private InputFragment fragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input_screen);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar_input));
 
-        //Initiates elements from xml and creates java equivalents
-        check = (Button) findViewById(R.id.checkButton);
-        layout = (ConstraintLayout) findViewById(R.id.input_layout);
-        hashtagicon = (TextView) findViewById(R.id.hashtag_icon);
-        helpText = (TextView) findViewById(R.id.input_screen_helptext);
-        text = (EditText) findViewById(R.id.input);
+            //Creates a fragment and adds to the activity layout in its container
+            fragment = new InputFragment();
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.add(R.id.inputContainer, fragment);
+            ft.commit();
 
     }
 
     @Override
     public void onClick(View v) {
-        //When the button is clicked, the definition for the hashtag from editText is
-        new HashtagCheck().execute(String.valueOf(text.getText()));
+        //When the button is clicked, the definition for the hashtag from editText is searched
+
+        //Grabs fragment EditText to access its text
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.inputContainer);
+        new HashtagCheck().execute(String.valueOf(((EditText) fragment.getView().findViewById(R.id.input)).getText()));
     }
 
     //Process where the hashtag definition is checked
@@ -168,22 +173,10 @@ public class InputScreen extends AppCompatActivity implements View.OnClickListen
         int id = item.getItemId();
         switch (id){
             case R.id.action_color:
-                if (!darkMode) {
-                    layout.setBackgroundColor(Color.GRAY);
-                    text.setTextColor(Color.WHITE);
-                    text.setHintTextColor(Color.WHITE);
-                    hashtagicon.setTextColor(Color.WHITE);
-                    helpText.setTextColor(Color.WHITE);
-                    darkMode = !darkMode;
-                }
-                else {
-                    layout.setBackgroundColor(Color.WHITE);
-                    text.setTextColor(Color.BLACK);
-                    text.setHintTextColor(Color.BLACK);
-                    hashtagicon.setTextColor(Color.BLACK);
-                    helpText.setTextColor(Color.BLACK);
-                    darkMode = !darkMode;
-                }
+                //Calls fragment method for changing color
+                InputFragment fragment = (InputFragment) getSupportFragmentManager().findFragmentById(R.id.inputContainer);
+                fragment.setDarkMode(darkMode);
+                darkMode = !darkMode;
                 return  true;
             case R.id.help:
                 Toast.makeText(this,"Type in a hashtag and the most popular definition will appear",Toast.LENGTH_LONG).show();
