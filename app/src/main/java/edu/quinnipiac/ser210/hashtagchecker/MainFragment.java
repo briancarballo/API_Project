@@ -11,8 +11,14 @@ import android.widget.Button;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * Main Fragment Class
+ * Author: Brian Carballo
+ * SER210
+ *
+ * Class encapsulates all UI elements of the main starting screen. Includes an interface to handle
+ * button click.
  */
+
 public class MainFragment extends Fragment implements View.OnClickListener {
 
 
@@ -41,9 +47,11 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        //creates reference to activity
         this.listener = (Listener)context;
     }
 
+    //Calls activity's onclick method
     @Override
     public void onClick(View v) {
         listener.onClick(v);

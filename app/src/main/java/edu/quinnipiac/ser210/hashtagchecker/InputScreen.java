@@ -50,35 +50,26 @@ public class InputScreen extends AppCompatActivity implements InputFragment.List
     private boolean darkMode;
     private final String LOG_TAG = InputScreen.class.getSimpleName();
     private Button check;
-    private Fragment fragment;
+    private InputFragment fragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input_screen);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar_input));
 
-        //Initiates elements from xml and creates java equivalents
-
-        if (savedInstanceState == null){
+            //Creates a fragment and adds to the activity layout in its container
             fragment = new InputFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.add(R.id.inputContainer, fragment);
-            ft.addToBackStack(null);
             ft.commit();
-
-            fragment = getSupportFragmentManager().findFragmentById(R.id.inputContainer);
-//            check = (Button) findViewById(R.id.checkButton);
-//            layout = (ConstraintLayout) findViewById(R.id.input_layout);
-//            hashtagicon = (TextView) findViewById(R.id.hashtag_icon);
-//            helpText = (TextView) findViewById(R.id.input_screen_helptext);
-//            text = (EditText) findViewById(R.id.input);
-        }
 
     }
 
     @Override
     public void onClick(View v) {
-        //When the button is clicked, the definition for the hashtag from editText is
+        //When the button is clicked, the definition for the hashtag from editText is searched
+
+        //Grabs fragment EditText to access its text
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.inputContainer);
         new HashtagCheck().execute(String.valueOf(((EditText) fragment.getView().findViewById(R.id.input)).getText()));
     }
@@ -180,26 +171,12 @@ public class InputScreen extends AppCompatActivity implements InputFragment.List
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.inputContainer);
         switch (id){
             case R.id.action_color:
-                if (!darkMode) {
-
-                    fragment.getView().setBackgroundColor(Color.GRAY);
-                    ((EditText) fragment.getView().findViewById(R.id.input)).setTextColor(Color.WHITE);
-                    ((EditText) fragment.getView().findViewById(R.id.input)).setHintTextColor(Color.WHITE);
-                    ((TextView) fragment.getView().findViewById(R.id.hashtag_icon)).setTextColor(Color.WHITE);
-                    ((TextView) fragment.getView().findViewById(R.id.input_screen_helptext)).setTextColor(Color.WHITE);
-                    darkMode = !darkMode;
-                }
-                else {
-                    fragment.getView().setBackgroundColor(Color.WHITE);
-                    ((EditText) fragment.getView().findViewById(R.id.input)).setTextColor(Color.BLACK);
-                    ((EditText) fragment.getView().findViewById(R.id.input)).setHintTextColor(Color.BLACK);
-                    ((TextView) fragment.getView().findViewById(R.id.hashtag_icon)).setTextColor(Color.BLACK);
-                    ((TextView) fragment.getView().findViewById(R.id.input_screen_helptext)).setTextColor(Color.BLACK);
-                    darkMode = !darkMode;
-                }
+                //Calls fragment method for changing color
+                InputFragment fragment = (InputFragment) getSupportFragmentManager().findFragmentById(R.id.inputContainer);
+                fragment.setDarkMode(darkMode);
+                darkMode = !darkMode;
                 return  true;
             case R.id.help:
                 Toast.makeText(this,"Type in a hashtag and the most popular definition will appear",Toast.LENGTH_LONG).show();
